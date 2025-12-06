@@ -1,12 +1,14 @@
 package com.cuentas.productos.cbs.model;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
 public class CrearCuentaRequest {
 
     @NotNull
@@ -18,6 +20,29 @@ public class CrearCuentaRequest {
     @NotNull
     private Integer sucursalIdApertura;
 
-    @Min(0)
+    @PositiveOrZero
     private BigDecimal saldoInicial;
+
+    public CrearCuentaRequest() {
+    }
+
+    public CrearCuentaRequest(Integer clienteId,
+                              Integer tipoCuentaId,
+                              Integer sucursalIdApertura,
+                              BigDecimal saldoInicial) {
+        this.clienteId = clienteId;
+        this.tipoCuentaId = tipoCuentaId;
+        this.sucursalIdApertura = sucursalIdApertura;
+        this.saldoInicial = saldoInicial;
+    }
+
+    @Override
+    public String toString() {
+        return "CrearCuentaRequest{" +
+                "clienteId=" + clienteId +
+                ", tipoCuentaId=" + tipoCuentaId +
+                ", sucursalIdApertura=" + sucursalIdApertura +
+                ", saldoInicial=" + saldoInicial +
+                '}';
+    }
 }

@@ -1,6 +1,6 @@
 package com.cuentas.productos.cbs.controller;
 
-import com.cuentas.productos.cbs.entities.TipoCuenta;
+import com.cuentas.productos.cbs.model.TipoCuenta;
 import com.cuentas.productos.cbs.service.TipoCuentaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

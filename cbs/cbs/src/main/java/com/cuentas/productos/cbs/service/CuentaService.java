@@ -1,9 +1,9 @@
 package com.cuentas.productos.cbs.service;
 
-import com.cuentas.productos.cbs.entities.Cuenta;
-import com.cuentas.productos.cbs.entities.TipoCuenta;
+import com.cuentas.productos.cbs.model.Cuenta;
 import com.cuentas.productos.cbs.model.CrearCuentaRequest;
 import com.cuentas.productos.cbs.model.CuentaResponse;
+import com.cuentas.productos.cbs.model.TipoCuenta;
 import com.cuentas.productos.cbs.repository.CuentaRepository;
 import com.cuentas.productos.cbs.repository.TipoCuentaRepository;
 import org.springframework.stereotype.Service;
@@ -36,8 +36,9 @@ public class CuentaService {
         cuenta.setTipoCuenta(tipoCuenta);
         cuenta.setSucursalIdApertura(request.getSucursalIdApertura());
         cuenta.setNumeroCuenta(generarNumeroCuenta());
-        cuenta.setSaldo(request.getSaldoInicial() != null ?
-                request.getSaldoInicial() : BigDecimal.ZERO);
+        cuenta.setSaldo(request.getSaldoInicial() != null
+                ? request.getSaldoInicial()
+                : BigDecimal.ZERO);
         cuenta.setFechaApertura(LocalDate.now());
         cuenta.setEstado("ACTIVA");
 

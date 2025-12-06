@@ -1,7 +1,7 @@
 package com.cuentas.productos.cbs.service;
 
-import com.cuentas.productos.cbs.entities.TasaInteresHistorico;
-import com.cuentas.productos.cbs.entities.TipoCuenta;
+import com.cuentas.productos.cbs.model.TasaInteresHistorico;
+import com.cuentas.productos.cbs.model.TipoCuenta;
 import com.cuentas.productos.cbs.repository.TasaInteresHistoricoRepository;
 import com.cuentas.productos.cbs.repository.TipoCuentaRepository;
 import org.springframework.stereotype.Service;

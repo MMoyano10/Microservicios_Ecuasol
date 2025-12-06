@@ -1,6 +1,6 @@
 package com.cuentas.productos.cbs.controller;
 
-import com.cuentas.productos.cbs.entities.TasaInteresHistorico;
+import com.cuentas.productos.cbs.model.TasaInteresHistorico;
 import com.cuentas.productos.cbs.service.TasaInteresService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
