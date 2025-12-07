@@ -1,6 +1,6 @@
 package com.ecusol.ms_transacciones.model;
 
-import jakarta.persistence.*; // O javax.persistence si usas Spring Boot < 3
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,58 +17,58 @@ public class Transaccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaccionid", nullable = false)
-    private Integer transaccionid;
+    private Integer transaccionId; // CAMBIO: de 'transaccionid' a 'transaccionId'
 
     @Column(name = "cuentaid", nullable = false)
-    private Integer cuentaid;
+    private Integer cuentaId; // CAMBIO: de 'cuentaid' a 'cuentaId' (Esto arregla el error)
 
     @Column(name = "referencia", length = 100)
-    private String referencia; // Mapeará al Instruction-ID del Switch (UUID)
+    private String referencia;
 
     @Column(name = "roltransaccion", length = 20)
-    private String rolTransaccion; // "DEBITO" (Origen) o "CREDITO" (Destino)
+    private String rolTransaccion;
 
     @Column(name = "monto", precision = 19, scale = 2, nullable = false)
     private BigDecimal monto;
 
     @Column(name = "descripcion", length = 255)
-    private String descripcion; // Remittance Information
+    private String descripcion;
 
     @Column(name = "estado", length = 20, nullable = false)
-    private String estado; // RECEIVED, COMPLETED, FAILED, PENDING (Según ERS Switch)
+    private String estado;
 
     @Column(name = "fechaejecucion")
     private LocalDateTime fechaEjecucion;
 
-    // Constructor vacío sin Lombok
+    // Constructor vacío
     public Transaccion() {
     }
 
-    // Constructor solo con clave primaria sin Lombok
-    public Transaccion(Integer transaccionid) {
-        this.transaccionid = transaccionid;
+    // Constructor solo con clave primaria
+    public Transaccion(Integer transaccionId) {
+        this.transaccionId = transaccionId;
     }
 
-    // Equals y HashCode comparando solo clave primaria sin Lombok
+    // Equals
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaccion that = (Transaccion) o;
-        return Objects.equals(transaccionid, that.transaccionid);
+        return Objects.equals(transaccionId, that.transaccionId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transaccionid);
+        return Objects.hash(transaccionId);
     }
 
-    // ToString con todas las propiedades sin Lombok
+    // ToString actualizado con los nuevos nombres
     @Override
     public String toString() {
         return "Transaccion{" +
-                "transaccionid=" + transaccionid +
-                ", cuentaid=" + cuentaid +
+                "transaccionId=" + transaccionId +
+                ", cuentaId=" + cuentaId +
                 ", referencia='" + referencia + '\'' +
                 ", rolTransaccion='" + rolTransaccion + '\'' +
                 ", monto=" + monto +

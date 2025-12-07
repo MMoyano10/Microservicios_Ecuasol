@@ -28,7 +28,7 @@ public class CuentaClient {
         try {
             // Asumimos un endpoint en ms-cuentas: GET /api/cuentas/{id}/saldo-disponible
             Boolean tieneSaldo = webClient.get()
-                    .uri("/api/cuentas/{id}/validar-monto?monto={monto}", cuentaId, monto)
+                    .uri("/api/v1/cuentas/{id}/validar-monto?monto={monto}", cuentaId, monto)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .bodyToMono(Boolean.class)
@@ -55,7 +55,7 @@ public class CuentaClient {
 
         try {
             webClient.post()
-                    .uri("/api/cuentas/{id}/movimientos", cuentaId)
+                    .uri("/api/v1/cuentas/{id}/movimientos", cuentaId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(request)
                     .retrieve()

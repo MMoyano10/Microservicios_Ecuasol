@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # --- BASE DE DATOS ---
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: ecusol-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - red-ecusol
+
+  # --- EUREKA ---
+  discovery-server:
+    build: ./discovery-server
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    networks:
+      - red-ecusol
+
+  # --- GATEWAY ---
+  gateway-server:
+    build: ./gateway-server
+    container_name: gateway-server
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_URI=http://discovery-server:8761/eureka
+    depends_on:
+      - discovery-server
+    networks:
+      - red-ecusol
+
+  # --- CBS (CUENTAS) ---
+  ms-cbs:
+    build: ./cbs/cbs  # ¡OJO! Apuntamos a la carpeta interna donde está el Dockerfile
+    container_name: ms-cbs
+    environment:
+      - EUREKA_URI=http://discovery-server:8761/eureka
+      - DB_HOST=postgres-db
+    depends_on:
+      - postgres-db
+      - discovery-server
+    networks:
+      - red-ecusol
+
+  # --- TRANSACCIONES ---
+  ms-transacciones:
+    build: ./ms-transacciones
+    container_name: ms-transacciones
+    environment:
+      - EUREKA_URI=http://discovery-server:8761/eureka
+      - DB_HOST=postgres-db
+      - APP_BANCO_ID=2 # EcuSol
+    depends_on:
+      - postgres-db
+      - discovery-server
+    networks:
+      - red-ecusol
+
+  # --- GEOGRAFIA ---
+  ms-geografia:
+    build: ./ms-geografia
+    container_name: ms-geografia
+    environment:
+      - EUREKA_URI=http://discovery-server:8761/eureka
+      - DB_HOST=postgres-db
+    depends_on:
+      - postgres-db
+      - discovery-server
+    networks:
+      - red-ecusol
+
+  # --- CLIENTES ---
+  ms-clientes:
+    build: ./ms-clientes
+    container_name: ms-clientes
+    environment:
+      - EUREKA_URI=http://discovery-server:8761/eureka
+      - DB_HOST=postgres-db
+    depends_on:
+      - postgres-db
+      - discovery-server
+    networks:
+      - red-ecusol
+
+networks:
+  red-ecusol:
+    driver: bridge
