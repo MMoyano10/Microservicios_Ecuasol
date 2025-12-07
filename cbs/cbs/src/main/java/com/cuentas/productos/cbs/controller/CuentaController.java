@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cuentas")
+@RequestMapping("/api/v1/cuentas")
 public class CuentaController {
 
     private final CuentaService cuentaService;

@@ -9,7 +9,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tasas")
+@RequestMapping("/api/v1/tasas")
 public class TasaInteresController {
 
     private final TasaInteresService service;

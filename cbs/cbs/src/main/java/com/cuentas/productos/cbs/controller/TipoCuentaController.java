@@ -9,7 +9,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tipos-cuenta")
+@RequestMapping("/api/v1/tipos-cuenta")
 public class TipoCuentaController {
 
     private final TipoCuentaService service;
