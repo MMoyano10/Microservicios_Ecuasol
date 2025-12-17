@@ -1,7 +1,7 @@
 package com.cuentas.productos.cbs.controller;
 
-import com.cuentas.productos.cbs.model.CrearCuentaRequest;
-import com.cuentas.productos.cbs.model.CuentaResponse;
+import com.cuentas.productos.cbs.dto.CrearCuentaRequest;
+import com.cuentas.productos.cbs.dto.CuentaResponse;
 import com.cuentas.productos.cbs.service.CuentaService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -14,27 +14,26 @@ import java.util.List;
 @RequestMapping("/api/cuentas")
 public class CuentaController {
 
-    private final CuentaService cuentaService;
+    private final CuentaService service;
 
-    public CuentaController(CuentaService cuentaService) {
-        this.cuentaService = cuentaService;
+    public CuentaController(CuentaService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<CuentaResponse> crear(@Valid @RequestBody CrearCuentaRequest request) {
-        CuentaResponse creada = cuentaService.crearCuenta(request);
+    public ResponseEntity<CuentaResponse> crear(@Valid @RequestBody CrearCuentaRequest req) {
+        CuentaResponse creada = service.crear(req);
         URI location = URI.create("/api/cuentas/" + creada.getCuentaId());
         return ResponseEntity.created(location).body(creada);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CuentaResponse> obtenerPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(cuentaService.obtenerPorId(id));
+    public ResponseEntity<CuentaResponse> obtener(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.obtener(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<CuentaResponse>> listarPorCliente(
-            @RequestParam Integer clienteId) {
-        return ResponseEntity.ok(cuentaService.listarPorCliente(clienteId));
+    public ResponseEntity<List<CuentaResponse>> listarPorCliente(@RequestParam Integer clienteId) {
+        return ResponseEntity.ok(service.listarPorCliente(clienteId));
     }
 }

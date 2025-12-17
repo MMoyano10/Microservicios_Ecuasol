@@ -1,8 +1,11 @@
 package com.cuentas.productos.cbs.service;
 
+import com.cuentas.productos.cbs.dto.CrearCuentaRequest;
+import com.cuentas.productos.cbs.dto.CuentaResponse;
+import com.cuentas.productos.cbs.exception.BusinessException;
+import com.cuentas.productos.cbs.exception.ResourceNotFoundException;
+import com.cuentas.productos.cbs.mapper.CuentaMapper;
 import com.cuentas.productos.cbs.model.Cuenta;
-import com.cuentas.productos.cbs.model.CrearCuentaRequest;
-import com.cuentas.productos.cbs.model.CuentaResponse;
 import com.cuentas.productos.cbs.model.TipoCuenta;
 import com.cuentas.productos.cbs.repository.CuentaRepository;
 import com.cuentas.productos.cbs.repository.TipoCuentaRepository;
@@ -16,63 +19,49 @@ import java.util.List;
 @Service
 public class CuentaService {
 
-    private final CuentaRepository cuentaRepository;
-    private final TipoCuentaRepository tipoCuentaRepository;
+    private final CuentaRepository cuentaRepo;
+    private final TipoCuentaRepository tipoCuentaRepo;
 
-    public CuentaService(CuentaRepository cuentaRepository,
-                         TipoCuentaRepository tipoCuentaRepository) {
-        this.cuentaRepository = cuentaRepository;
-        this.tipoCuentaRepository = tipoCuentaRepository;
+    public CuentaService(CuentaRepository cuentaRepo, TipoCuentaRepository tipoCuentaRepo) {
+        this.cuentaRepo = cuentaRepo;
+        this.tipoCuentaRepo = tipoCuentaRepo;
     }
 
     @Transactional
-    public CuentaResponse crearCuenta(CrearCuentaRequest request) {
+    public CuentaResponse crear(CrearCuentaRequest req) {
 
-        TipoCuenta tipoCuenta = tipoCuentaRepository.findById(request.getTipoCuentaId())
-                .orElseThrow(() -> new IllegalArgumentException("Tipo de cuenta no existe"));
+        if (req.getSaldoInicial() != null && req.getSaldoInicial().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("El saldo inicial no puede ser negativo");
+        }
+
+        TipoCuenta tipo = tipoCuentaRepo.findById(req.getTipoCuentaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de cuenta no existe: " + req.getTipoCuentaId()));
 
         Cuenta cuenta = new Cuenta();
-        cuenta.setClienteId(request.getClienteId());
-        cuenta.setTipoCuenta(tipoCuenta);
-        cuenta.setSucursalIdApertura(request.getSucursalIdApertura());
+        cuenta.setClienteId(req.getClienteId());
+        cuenta.setTipoCuenta(tipo);
+        cuenta.setSucursalIdApertura(req.getSucursalIdApertura());
         cuenta.setNumeroCuenta(generarNumeroCuenta());
-        cuenta.setSaldo(request.getSaldoInicial() != null
-                ? request.getSaldoInicial()
-                : BigDecimal.ZERO);
+        cuenta.setSaldo(req.getSaldoInicial() != null ? req.getSaldoInicial() : BigDecimal.ZERO);
         cuenta.setFechaApertura(LocalDate.now());
         cuenta.setEstado("ACTIVA");
 
-        Cuenta guardada = cuentaRepository.save(cuenta);
-        return toResponse(guardada);
+        return CuentaMapper.toResponse(cuentaRepo.save(cuenta));
     }
 
-    public CuentaResponse obtenerPorId(Integer id) {
-        Cuenta cuenta = cuentaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada"));
-        return toResponse(cuenta);
+    public CuentaResponse obtener(Integer id) {
+        Cuenta cuenta = cuentaRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada: " + id));
+        return CuentaMapper.toResponse(cuenta);
     }
 
     public List<CuentaResponse> listarPorCliente(Integer clienteId) {
-        return cuentaRepository.findByClienteId(clienteId)
-                .stream()
-                .map(this::toResponse)
+        return cuentaRepo.findByClienteId(clienteId).stream()
+                .map(CuentaMapper::toResponse)
                 .toList();
     }
 
     private String generarNumeroCuenta() {
         return String.valueOf(System.currentTimeMillis()).substring(3);
-    }
-
-    private CuentaResponse toResponse(Cuenta cuenta) {
-        CuentaResponse dto = new CuentaResponse();
-        dto.setCuentaId(cuenta.getId());
-        dto.setNumeroCuenta(cuenta.getNumeroCuenta());
-        dto.setClienteId(cuenta.getClienteId());
-        dto.setTipoCuentaId(cuenta.getTipoCuenta().getId());
-        dto.setSucursalIdApertura(cuenta.getSucursalIdApertura());
-        dto.setSaldo(cuenta.getSaldo());
-        dto.setFechaApertura(cuenta.getFechaApertura());
-        dto.setEstado(cuenta.getEstado());
-        return dto;
     }
 }

@@ -1,7 +1,9 @@
 package com.cuentas.productos.cbs.controller;
 
-import com.cuentas.productos.cbs.model.TipoCuenta;
+import com.cuentas.productos.cbs.dto.TipoCuentaRequest;
+import com.cuentas.productos.cbs.dto.TipoCuentaResponse;
 import com.cuentas.productos.cbs.service.TipoCuentaService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,26 +21,26 @@ public class TipoCuentaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TipoCuenta>> listar() {
+    public ResponseEntity<List<TipoCuentaResponse>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TipoCuenta> obtener(@PathVariable Integer id) {
+    public ResponseEntity<TipoCuentaResponse> obtener(@PathVariable Integer id) {
         return ResponseEntity.ok(service.obtener(id));
     }
 
     @PostMapping
-    public ResponseEntity<TipoCuenta> crear(@RequestBody TipoCuenta tipo) {
-        TipoCuenta creado = service.crear(tipo);
-        URI location = URI.create("/api/tipos-cuenta/" + creado.getId());
+    public ResponseEntity<TipoCuentaResponse> crear(@Valid @RequestBody TipoCuentaRequest req) {
+        TipoCuentaResponse creado = service.crear(req);
+        URI location = URI.create("/api/tipos-cuenta/" + creado.getTipoCuentaId());
         return ResponseEntity.created(location).body(creado);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TipoCuenta> actualizar(@PathVariable Integer id,
-                                                 @RequestBody TipoCuenta tipo) {
-        return ResponseEntity.ok(service.actualizar(id, tipo));
+    public ResponseEntity<TipoCuentaResponse> actualizar(@PathVariable Integer id,
+                                                        @Valid @RequestBody TipoCuentaRequest req) {
+        return ResponseEntity.ok(service.actualizar(id, req));
     }
 
     @DeleteMapping("/{id}")
