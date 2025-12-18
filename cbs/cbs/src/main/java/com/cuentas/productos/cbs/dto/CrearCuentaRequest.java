@@ -1,4 +1,4 @@
-package com.cuentas.productos.cbs.model;
+package com.cuentas.productos.cbs.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
