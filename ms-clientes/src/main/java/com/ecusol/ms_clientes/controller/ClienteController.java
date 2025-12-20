@@ -21,7 +21,6 @@ public class ClienteController {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    // POST /api/v1/clientes/personas
     @PostMapping("/personas")
     public ResponseEntity<Integer> crearPersona(@RequestBody RegistroClientePersonaDTO dto) {
         try {
@@ -39,7 +38,6 @@ public class ClienteController {
         }
     }
 
-    // GET /api/v1/clientes/{id}/estado
     @GetMapping("/{id}/estado")
     public ResponseEntity<String> getEstado(@PathVariable Integer id) {
         return clienteRepository.findById(id)

@@ -31,12 +31,10 @@ public class Persona extends Cliente {
     @Column(name = "fechanacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
-    // Constructor vacío
     public Persona() {
         super();
     }
 
-    // Constructor solo con la clave primaria (clienteid)
     public Persona(Integer clienteId) {
         super(clienteId);
     }

@@ -13,17 +13,14 @@ import java.time.LocalDate;
 @Setter
 public class RepresentanteEmpresa implements Serializable {
 
-    // PK (en DB podría llamarse clienteempresaid, ajústalo si es necesario)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "clienteempresaid")
     private Integer representanteId;
 
-    // FK a empresa (cliente empresa)
     @Column(name = "empresaid", nullable = false)
     private Integer empresaId;
 
-    // FK a persona (cliente persona)
     @Column(name = "personaid", nullable = false)
     private Integer personaId;
 
@@ -39,11 +36,9 @@ public class RepresentanteEmpresa implements Serializable {
     @Column(name = "estado", nullable = false, length = 15)
     private String estado;
 
-    // Constructor vacío
     public RepresentanteEmpresa() {
     }
 
-    // Constructor solo con la clave primaria
     public RepresentanteEmpresa(Integer representanteId) {
         this.representanteId = representanteId;
     }

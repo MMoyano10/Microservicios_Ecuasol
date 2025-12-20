@@ -28,11 +28,9 @@ public class Cliente implements Serializable {
     @Column(name = "fecharegistro", nullable = false)
     private LocalDate fechaRegistro;
 
-    // Constructor vacío
     public Cliente() {
     }
 
-    // Constructor solo con la clave primaria
     public Cliente(Integer clienteId) {
         this.clienteId = clienteId;
     }

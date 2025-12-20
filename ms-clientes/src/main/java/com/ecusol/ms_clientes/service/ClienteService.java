@@ -1,45 +1,56 @@
 package com.ecusol.ms_clientes.service;
 
 import com.ecusol.ms_clientes.dto.RegistroClientePersonaDTO;
+import com.ecusol.ms_clientes.exception.ClienteCreacionException;
+import com.ecusol.ms_clientes.exception.ClienteYaRegistradoException;
+import com.ecusol.ms_clientes.mapper.PersonaMapper;
 import com.ecusol.ms_clientes.model.Persona;
 import com.ecusol.ms_clientes.repository.PersonaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Service
 public class ClienteService {
 
-    private final PersonaRepository personaRepository;
+    private static final Logger log = LoggerFactory.getLogger(ClienteService.class);
 
-    // ✅ Constructor para inyectar el repositorio
-    public ClienteService(PersonaRepository personaRepository) {
+    private final PersonaRepository personaRepository;
+    private final PersonaMapper personaMapper;
+
+    public ClienteService(PersonaRepository personaRepository, PersonaMapper personaMapper) {
         this.personaRepository = personaRepository;
+        this.personaMapper = personaMapper;
     }
 
     @Transactional
     public Integer crearClientePersona(RegistroClientePersonaDTO dto) {
 
-        // Validar que la cédula no exista ya
-        if (personaRepository.findByNumeroIdentificacion(dto.getCedula()).isPresent()) {
-            throw new IllegalArgumentException("La cédula ya se encuentra registrada en Clientes");
+        final String cedula = dto.getCedula();
+
+        log.info("Intentando crear cliente persona con identificación={}", cedula);
+
+        if (personaRepository.findByNumeroIdentificacion(cedula).isPresent()) {
+            log.warn("Creación rechazada: identificación duplicada={}", cedula);
+            throw new ClienteYaRegistradoException(cedula);
         }
 
-        Persona persona = new Persona();
-        persona.setTipoCliente("P");
-        persona.setEstado("ACTIVO");
-        persona.setFechaRegistro(LocalDate.now());
-        persona.setNombres(dto.getNombres());
-        persona.setApellidos(dto.getApellidos());
-        persona.setNumeroIdentificacion(dto.getCedula());
-        persona.setTipoIdentificacion("CEDULA");
-        persona.setDireccion(dto.getDireccion());
-        persona.setFechaNacimiento(
-                dto.getFechaNacimiento() != null ? dto.getFechaNacimiento() : LocalDate.now()
-        );
+        try {
+            Persona persona = personaMapper.toEntity(dto);
 
-        Persona personaGuardada = personaRepository.save(persona);
-        return personaGuardada.getClienteId();
+            Persona personaGuardada = personaRepository.save(persona);
+
+            log.info("Cliente persona creado correctamente. clienteId={}, identificación={}",
+                    personaGuardada.getClienteId(), cedula);
+
+            return personaGuardada.getClienteId();
+
+        } catch (ClienteYaRegistradoException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error inesperado creando cliente persona. identificación={}", cedula, e);
+            throw new ClienteCreacionException("No se pudo crear el cliente persona", e);
+        }
     }
 }

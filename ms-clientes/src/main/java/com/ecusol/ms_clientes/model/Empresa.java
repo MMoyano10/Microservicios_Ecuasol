@@ -23,12 +23,10 @@ public class Empresa extends Cliente {
     @Column(name = "telefono", nullable = false, length = 20)
     private String telefono;
 
-    // Constructor vacío
     public Empresa() {
         super();
     }
 
-    // Constructor solo con la clave primaria (clienteid)
     public Empresa(Integer clienteId) {
         super(clienteId);
     }
